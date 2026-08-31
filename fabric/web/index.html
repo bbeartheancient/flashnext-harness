@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="classic">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<title>WOODFIRE FABRIC</title>
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem("fabric-theme");
+    if (t) document.documentElement.dataset.theme = t;
+  } catch (e) { /* private */ }
+})();
+</script>
+<link rel="stylesheet" href="/ui/lcars26/assets/classic.css">
+<link rel="stylesheet" href="theme/palettes.css">
+<link rel="stylesheet" href="kit.css">
+</head>
+<body>
+<audio id="audio1" src="/ui/lcars26/assets/beep1.mp3" preload="auto"></audio>
+<audio id="audio2" src="/ui/lcars26/assets/beep2.mp3" preload="auto"></audio>
+<audio id="audio3" src="/ui/lcars26/assets/beep3.mp3" preload="auto"></audio>
+<audio id="audio4" src="/ui/lcars26/assets/beep4.mp3" preload="auto"></audio>
+
+<section class="wrap-standard" id="column-3">
+  <div class="wrap" id="chromeTop">
+    <div class="left-frame-top">
+      <button type="button" class="panel-1" id="lblDept">SCIENCES<span class="hop">&nbsp;400</span></button>
+      <button type="button" class="panel-2" id="lblTask">COMMAND<span class="hop">-IN</span></button>
+    </div>
+    <div class="right-frame-top">
+      <div class="banner">WOODFIRE FABRIC</div>
+      <div class="data-cascade-button-group">
+        <div class="term-stack" id="termStack">
+          <div class="data-cascade-wrapper" id="frozen">
+            <div class="term-log" id="term">ready · type a task</div>
+          </div>
+          <form class="cmd-bar" id="cmd" autocomplete="off">
+            <div class="slash-wrap">
+              <input id="cmdIn" name="q" type="text"
+                placeholder="ask the computer · / for commands"
+                aria-label="command" aria-autocomplete="list" aria-controls="slashMenu">
+              <div id="slashMenu" class="slash-menu" hidden role="listbox"></div>
+            </div>
+            <button type="submit" class="fabric-engage">Engage</button>
+          </form>
+        </div>
+        <nav id="contextNav"></nav>
+      </div>
+      <div class="bar-panel first-bar-panel">
+        <div class="bar-1"></div><div class="bar-2"></div>
+        <div class="bar-3"></div>
+        <button type="button" class="bar-4 frame-ctl" id="ctlTerm" title="terminal">TERM</button>
+        <div class="bar-5"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" id="gap">
+    <div class="left-frame">
+      <button type="button" id="topBtn"><span class="hop">screen</span> top</button>
+      <div id="boxCol">
+        <button type="button" class="panel-3" id="lblLive">STANDBY</button>
+        <form class="input-col" id="io" hidden></form>
+        <div id="liveCol"></div>
+      </div>
+      <div class="panel-spacer"></div>
+      <button type="button" class="panel-7" id="lblBot">NODE 188</button>
+    </div>
+    <div class="right-frame">
+      <div class="bar-panel">
+        <div class="bar-6"></div><div class="bar-7"></div>
+        <div class="bar-8"></div>
+        <button type="button" class="bar-9 frame-ctl" id="ctlViz" title="visualizer">VIZ</button>
+        <div class="bar-10"></div>
+      </div>
+      <div class="stage-body">
+        <main>
+          <div class="tile-deck wall" id="tileDeck"></div>
+        </main>
+        <aside class="stage-right" id="ioRight" hidden></aside>
+      </div>
+      <footer class="fabric-foot">
+        DATA NODE 188 · <span id="clock">--:--:--</span>
+      </footer>
+      <div class="bar-panel last-bar-panel">
+        <div class="bar-6"></div><div class="bar-7"></div>
+        <div class="bar-8"></div>
+        <div class="bar-9"></div>
+        <div class="bar-10"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="maxBox" class="max-box" hidden>
+  <div class="max-row top">
+    <button type="button" class="elbow tl" id="cTL" aria-label="previous"></button>
+    <div class="max-bar-wrap">
+      <div class="max-bar top">
+        <button type="button" class="seg a" data-corner="cTL" aria-label="previous"></button>
+        <button type="button" class="seg b" data-corner="cTR" aria-label="next"></button>
+      </div>
+      <span id="maxTitle"></span>
+    </div>
+    <button type="button" class="elbow tr" id="cTR" aria-label="next"></button>
+  </div>
+  <div class="max-row mid">
+    <div class="max-left" id="maxLeft">
+      <div class="max-fill" id="maxFillL" aria-hidden="true"></div>
+    </div>
+    <div class="max-center" id="maxCenter">
+      <div class="duty-log" id="dutyLog" hidden></div>
+      <div class="settings" id="settings" hidden>
+        <p class="settings-h" id="settingsH">library</p>
+        <div class="settings-tabs" id="settingsTabs">
+          <button type="button" data-settab="harness">harness</button>
+          <button type="button" data-settab="library">library</button>
+          <button type="button" data-settab="wizard">new</button>
+          <button type="button" data-settab="palette">palette</button>
+        </div>
+        <div id="harnessPane" hidden>
+          <p class="settings-sub">orchestrator — plans and refines; tools stay local</p>
+          <div class="cfg-grid" id="harnessOrch"></div>
+          <p class="settings-sub">API key + model (server-side; keys never shown in full)</p>
+          <form class="harness-form" id="harnessForm" autocomplete="off">
+            <label>Grok (xAI) key
+              <input id="keyGrok" type="password" name="grok" spellcheck="false" autocomplete="off">
+            </label>
+            <label>Grok model
+              <input id="modelGrok" type="text" name="grok_model" list="modelsGrok" spellcheck="false" autocomplete="off">
+              <datalist id="modelsGrok"></datalist>
+            </label>
+            <label>Kimi (Moonshot) key
+              <input id="keyKimi" type="password" name="kimi" spellcheck="false" autocomplete="off">
+            </label>
+            <label>Kimi model
+              <input id="modelKimi" type="text" name="kimi_model" list="modelsKimi" spellcheck="false" autocomplete="off">
+              <datalist id="modelsKimi"></datalist>
+            </label>
+            <label>OpenCode Zen key
+              <input id="keyZen" type="password" name="opencode-zen" spellcheck="false" autocomplete="off">
+            </label>
+            <label>OpenCode Zen model
+              <input id="modelZen" type="text" name="zen_model" list="modelsZen" spellcheck="false" autocomplete="off">
+              <datalist id="modelsZen"></datalist>
+            </label>
+            <div class="harness-actions">
+              <button type="submit" class="fabric-engage" id="harnessSave">Save</button>
+              <button type="button" class="fabric-engage" id="harnessTest">Test</button>
+            </div>
+          </form>
+          <p class="cfg-gates" id="harnessStatus"></p>
+          <p class="settings-sub">workers (always local)</p>
+          <div class="cfg-grid" id="harnessWorkers"></div>
+        </div>
+        <div id="libPane">
+          <input id="appName" type="text" placeholder="app name (enter to rename)"
+                 autocomplete="off" spellcheck="false">
+          <input id="libSearch" type="text" placeholder="filter apps" autocomplete="off">
+          <div class="cfg-grid" id="libList"></div>
+        </div>
+        <div id="wizPane" hidden>
+          <p class="settings-sub">signal path — source → functions → visualizer</p>
+          <div class="cfg-grid" id="wizSource"></div>
+          <p class="settings-sub">stream / url (when the source needs one)</p>
+          <input id="wizFeed" type="text" placeholder="topic or media url"
+                 autocomplete="off" spellcheck="false">
+          <p class="settings-sub">visualizer</p>
+          <div class="cfg-grid" id="wizSigViz"></div>
+          <p class="settings-sub" id="wizSigChain">functions · controls</p>
+          <button type="button" class="fabric-engage" id="wizSignalCreate">Create signal app</button>
+          <details id="routeLegacy" style="margin-top:10px">
+            <summary class="settings-sub" style="cursor:pointer">route binds (legacy)</summary>
+            <p class="settings-sub" id="wizPreview">pick a route</p>
+          <p class="cfg-gates" id="cfgGates" hidden></p>
+          <p class="settings-sub">department</p>
+          <div class="cfg-grid" id="wizDept"></div>
+          <p class="settings-sub">input</p>
+          <div class="cfg-grid" id="wizIn"></div>
+          <p class="settings-sub">output</p>
+          <div class="cfg-grid" id="wizOut"></div>
+          <p class="settings-sub">viewports</p>
+          <div class="cfg-grid" id="wizVp"></div>
+          <button type="button" class="fabric-engage" id="wizCreate">Create</button>
+        </div>
+        <div id="palettePane" hidden>
+          <p class="settings-sub">palette</p>
+          <div class="theme-grid" id="themeGrid"></div>
+        </div>
+        <p class="settings-hint">BL · settings&nbsp;&nbsp;/harness · keys&nbsp;&nbsp;BR · home</p>
+      </div>
+    </div>
+    <div class="max-right" id="maxRight">
+      <div class="max-cap" id="maxCapR" aria-hidden="true"></div>
+      <div class="max-fill" id="maxFillR" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="max-row bot">
+    <button type="button" class="elbow bl" id="cBL" aria-label="settings"></button>
+    <div class="max-bar-wrap">
+      <div class="max-bar bot">
+        <button type="button" class="seg a" data-corner="cBL" aria-label="settings"></button>
+        <div class="seg b wall-scale" id="wallScale">
+          <button type="button" class="scale-down" id="scaleDown" aria-label="fewer viewports">−</button>
+          <button type="button" class="scale-up" id="scaleUp" aria-label="more viewports">+</button>
+        </div>
+        <button type="button" class="seg c" data-corner="cBR" aria-label="home"></button>
+      </div>
+    </div>
+    <button type="button" class="elbow br" id="cBR" aria-label="home"></button>
+  </div>
+</section>
+<script src="/ui/vendor/three.min.js"></script>
+<script src="/ui/lcars26/assets/lcars.js"></script>
+<script src="app.js"></script>
+<div class="headtrim"></div>
+<div class="baseboard"></div>
+</body>
+</html>
+

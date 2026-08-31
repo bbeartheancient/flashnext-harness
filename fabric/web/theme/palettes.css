@@ -1,0 +1,271 @@
+/* Palette remaps for LCARS-26 classic tokens. Applied via html[data-theme]. */
+
+html[data-theme="voyager"] {
+  --african-violet: #70b5ff;
+  --almond: #828cad;
+  --almond-creme: #e6f2ff;
+  --bluey: #55a7ff;
+  --orange: #ffbb33;
+  --red: #ff3300;
+  --butterscotch: #fb9004;
+  --dirty-mauve: #585a68;
+  --dusty-mauve: #74788b;
+  --lilac: #99ccff;
+  --subdued-sienna: #cc9966;
+  --true-mauve: #bec2cf;
+  --barley: #ffe1ca;
+  --mars: #ff3300;
+  --left-frame-top-color: #828cad;
+  --left-frame-color: #828cad;
+  --corner-color-top: #828cad;
+  --corner-color-bottom: #828cad;
+  --panel-1-color: #ffbb33;
+  --panel-2-color: #828cad;
+  --panel-7-color: #828cad;
+  --bar-1-color: #828cad;
+  --bar-2-color: #ffbb33;
+  --bar-3-color: #2288ff;
+  --bar-4-color: #828cad;
+  --bar-5-color: #ff3300;
+  --bar-6-color: #828cad;
+  --bar-7-color: #ffe1ca;
+  --bar-8-color: #2288ff;
+  --bar-9-color: #828cad;
+  --bar-10-color: #ffe1ca;
+  --nav-1-color: #55a7ff;
+  --nav-2-color: #74788b;
+  --nav-3-color: #cc9966;
+  --nav-4-color: #ffe1ca;
+  --banner-color: #ffbb33;
+  --font-color: #70b5ff;
+  --data-cascade-color: #ffbb33;
+  --button-color: #828cad;
+}
+
+html[data-theme="nemesis"] {
+  --african-violet: #66bbff;
+  --almond: #d29270;
+  --almond-creme: #ebf0ff;
+  --bluey: #2266ff;
+  --orange: #ff8833;
+  --red: #da2537;
+  --butterscotch: #ff7744;
+  --dirty-mauve: #52526a;
+  --dusty-mauve: #8e5a3c;
+  --lilac: #8888ff;
+  --subdued-sienna: #b88b5c;
+  --true-mauve: #6699ff;
+  --barley: #d1a16c;
+  --mars: #da2537;
+  --left-frame-top-color: #2266ff;
+  --left-frame-color: #2266ff;
+  --corner-color-top: #2266ff;
+  --corner-color-bottom: #2266ff;
+  --panel-1-color: #d1a16c;
+  --panel-2-color: #ebf0ff;
+  --panel-7-color: #2266ff;
+  --bar-1-color: #2266ff;
+  --bar-2-color: #ffcc99;
+  --bar-3-color: #6699ff;
+  --bar-4-color: #0048f0;
+  --bar-5-color: #52526a;
+  --bar-6-color: #2266ff;
+  --bar-7-color: #ff8833;
+  --bar-8-color: #ebf0ff;
+  --bar-9-color: #2266ff;
+  --bar-10-color: #52526a;
+  --nav-1-color: #a52a2a;
+  --nav-2-color: #d29270;
+  --nav-3-color: #8e5a3c;
+  --nav-4-color: #e63d00;
+  --banner-color: #88bbff;
+  --font-color: #6699ff;
+  --data-cascade-color: #6699ff;
+  --button-color: #6699ff;
+}
+
+html[data-theme="lower-decks"] {
+  --african-violet: #ffcc99;
+  --almond: #ff7700;
+  --almond-creme: #ffeedd;
+  --bluey: #ffaa44;
+  --orange: #ff7700;
+  --red: #ff4400;
+  --butterscotch: #ffaa44;
+  --dirty-mauve: #cc5500;
+  --dusty-mauve: #ff9911;
+  --lilac: #ffcc99;
+  --subdued-sienna: #cc5500;
+  --true-mauve: #ff9911;
+  --barley: #ffcc99;
+  --mars: #ff4400;
+  --left-frame-top-color: #ff4400;
+  --left-frame-color: #ff7700;
+  --corner-color-top: #ff4400;
+  --corner-color-bottom: #ff4400;
+  --panel-1-color: #ff7700;
+  --panel-2-color: #ffaa44;
+  --panel-7-color: #ffaa44;
+  --bar-1-color: #ff4400;
+  --bar-2-color: #ff7700;
+  --bar-3-color: #ffcc99;
+  --bar-4-color: #ffaa44;
+  --bar-5-color: #ff4400;
+  --bar-6-color: #ff4400;
+  --bar-7-color: #ff7700;
+  --bar-8-color: #ffcc99;
+  --bar-9-color: #ffaa44;
+  --bar-10-color: #ff4400;
+  --nav-1-color: #ffcc99;
+  --nav-2-color: #ffaa44;
+  --nav-3-color: #ff7700;
+  --nav-4-color: #ff4400;
+  --banner-color: #ffcc99;
+  --font-color: #ff9911;
+  --data-cascade-color: #ff7700;
+  --button-color: #ffaa44;
+}
+
+html[data-theme="picard"] {
+  --african-violet: #9ea5ba;
+  --almond: #6d748c;
+  --almond-creme: #d2d5df;
+  --bluey: #37a6d1;
+  --orange: #e7442a;
+  --red: #e7442a;
+  --butterscotch: #ff6753;
+  --dirty-mauve: #2f3749;
+  --dusty-mauve: #52596e;
+  --lilac: #41c4f7;
+  --subdued-sienna: #ff977b;
+  --true-mauve: #6d748c;
+  --barley: #f3f4f7;
+  --mars: #e7442a;
+  --left-frame-top-color: #2a7193;
+  --left-frame-color: #1c3c55;
+  --corner-color-top: #37a6d1;
+  --corner-color-bottom: #e7442a;
+  --panel-1-color: #37a6d1;
+  --panel-2-color: #2a7193;
+  --panel-7-color: #6d748c;
+  --bar-1-color: #37a6d1;
+  --bar-2-color: #e7442a;
+  --bar-3-color: #9ea5ba;
+  --bar-4-color: #41c4f7;
+  --bar-5-color: #e7442a;
+  --bar-6-color: #1c3c55;
+  --bar-7-color: #ff6753;
+  --bar-8-color: #9ea5ba;
+  --bar-9-color: #37a6d1;
+  --bar-10-color: #6d748c;
+  --nav-1-color: #37a6d1;
+  --nav-2-color: #6d748c;
+  --nav-3-color: #e7442a;
+  --nav-4-color: #ff6753;
+  --banner-color: #f3f4f7;
+  --font-color: #41c4f7;
+  --data-cascade-color: #37a6d1;
+  --button-color: #6d748c;
+}
+
+html[data-theme="lcars"] {
+  --african-violet: #b6a5d1;
+  --almond: #d29a7f;
+  --almond-creme: #eb9870;
+  --bluey: #8b72aa;
+  --orange: #ec943a;
+  --red: #b73916;
+  --butterscotch: #faa41b;
+  --dirty-mauve: #9c698a;
+  --dusty-mauve: #c082a9;
+  --lilac: #8b72aa;
+  --subdued-sienna: #c47d69;
+  --true-mauve: #c082a9;
+  --barley: #faa41b;
+  --mars: #b73916;
+}
+
+html[data-theme="amber"] {
+  --african-violet: #ffd24d;
+  --almond: #ad7700;
+  --almond-creme: #ffe1a0;
+  --bluey: #ffb000;
+  --orange: #ffb000;
+  --red: #ff6a00;
+  --butterscotch: #e09800;
+  --dirty-mauve: #5a3d00;
+  --dusty-mauve: #8a5c00;
+  --lilac: #c28200;
+  --subdued-sienna: #a36d00;
+  --true-mauve: #ad7700;
+  --barley: #ffd24d;
+  --mars: #ff6a00;
+}
+
+html[data-theme="green"] {
+  --african-violet: #baffd0;
+  --almond: #1f7a3d;
+  --almond-creme: #7ddc9e;
+  --bluey: #33ff66;
+  --orange: #23ac45;
+  --red: #00cc44;
+  --butterscotch: #23ac45;
+  --dirty-mauve: #125924;
+  --dusty-mauve: #14532d;
+  --lilac: #7ddc9e;
+  --subdued-sienna: #1f7a3d;
+  --true-mauve: #1f7a3d;
+  --barley: #baffd0;
+  --mars: #00cc44;
+}
+
+html[data-theme="plasma"] {
+  --african-violet: #ff8a66;
+  --almond: #c23a12;
+  --almond-creme: #ffb59d;
+  --bluey: #ff4a1f;
+  --orange: #ff4a1f;
+  --red: #ff2200;
+  --butterscotch: #d63c14;
+  --dirty-mauve: #571a0c;
+  --dusty-mauve: #8a1f08;
+  --lilac: #ff8a66;
+  --subdued-sienna: #b32f10;
+  --true-mauve: #c23a12;
+  --barley: #ffb59d;
+  --mars: #ff2200;
+}
+
+html[data-theme="mono"] {
+  --african-violet: #d9d9d9;
+  --almond: #707070;
+  --almond-creme: #f2f2f2;
+  --bluey: #a1a1a1;
+  --orange: #f2f2f2;
+  --red: #ff3333;
+  --butterscotch: #a1a1a1;
+  --dirty-mauve: #515151;
+  --dusty-mauve: #8a8a8a;
+  --lilac: #d9d9d9;
+  --subdued-sienna: #707070;
+  --true-mauve: #8a8a8a;
+  --barley: #f2f2f2;
+  --mars: #ff3333;
+}
+
+html[data-theme="vga"] {
+  --african-violet: #5555ff;
+  --almond: #00a8a8;
+  --almond-creme: #c0c0c0;
+  --bluey: #55ffff;
+  --orange: #ffff55;
+  --red: #ff5555;
+  --butterscotch: #ffff55;
+  --dirty-mauve: #0000a8;
+  --dusty-mauve: #5555ff;
+  --lilac: #5555ff;
+  --subdued-sienna: #00a8a8;
+  --true-mauve: #4444cc;
+  --barley: #ffffff;
+  --mars: #ff5555;
+}

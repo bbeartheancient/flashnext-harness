@@ -1,0 +1,110 @@
+:root {
+  --fg: #f2f2f2;
+  --bg: #000000;
+  --dim: #8a8a8a;
+  --faint: #262626;
+  --accent: #ffffff;
+  --panel-line: #3a3a3a;
+  --glow: transparent;
+  --ramp-1: #515151;
+  --ramp-2: #a1a1a1;
+  --bar: #f2f2f2;
+  --bar-alt: #a1a1a1;
+  --a1: #f2f2f2; --a2: #d9d9d9; --a3: #a1a1a1; --a4: #8a8a8a;
+  --a5: #ffffff; --a6: #707070; --a7: #515151; --a8: #3a3a3a; --a9: #262626;
+  --ex1: #ff3333;
+}
+
+[data-theme="mono"] {
+  --fg: #f2f2f2; --bg: #000000; --dim: #8a8a8a; --faint: #262626;
+  --accent: #ffffff; --panel-line: #3a3a3a; --glow: #f2f2f233;
+  --ramp-1: #515151; --ramp-2: #a1a1a1; --bar: #f2f2f2; --bar-alt: #a1a1a1;
+  --a1: #f2f2f2; --a2: #d9d9d9; --a3: #a1a1a1; --a4: #8a8a8a;
+  --a5: #ffffff; --a6: #707070; --a7: #515151; --a8: #3a3a3a; --a9: #262626;
+  --ex1: #ff3333;
+}
+
+[data-theme="green"] {
+  --fg: #33ff66; --bg: #020603; --dim: #1f7a3d; --faint: #0a2614;
+  --accent: #baffd0; --panel-line: #14532d; --glow: #33ff6644;
+  --ramp-1: #125924; --ramp-2: #23ac45; --bar: #33ff66; --bar-alt: #23ac45;
+  --a1: #33ff66; --a2: #23ac45; --a3: #125924; --a4: #0f4a1e;
+  --a5: #baffd0; --a6: #1f7a3d; --a7: #14532d; --a8: #7ddc9e; --a9: #0a2614;
+  --ex1: #00cc44;
+}
+
+[data-theme="amber"] {
+  --fg: #ffb000; --bg: #080400; --dim: #8a5c00; --faint: #241500;
+  --accent: #ffe1a0; --panel-line: #4a2f00; --glow: #ffb00044;
+  --ramp-1: #5a3d00; --ramp-2: #ad7700; --bar: #ffb000; --bar-alt: #ad7700;
+  --a1: #ffb000; --a2: #e09800; --a3: #c28200; --a4: #a36d00;
+  --a5: #ffd24d; --a6: #ad7700; --a7: #8a5c00; --a8: #ffe1a0; --a9: #5a3d00;
+  --ex1: #ff6a00;
+}
+
+[data-theme="plasma"] {
+  --fg: #ff4a1f; --bg: #0d0200; --dim: #7a2410; --faint: #260801;
+  --accent: #ffb59d; --panel-line: #571a0c; --glow: #ff5a2a66;
+  --ramp-1: #8a1f08; --ramp-2: #ff4a1f; --bar: #ff4a1f; --bar-alt: #8a1f08;
+  --a1: #ff4a1f; --a2: #d63c14; --a3: #8a1f08; --a4: #b32f10;
+  --a5: #ffb59d; --a6: #c23a12; --a7: #571a0c; --a8: #ff8a66; --a9: #2e0d04;
+  --ex1: #ff2200;
+}
+
+[data-theme="dmg"] {
+  --fg: #1b2a09; --bg: #9a9e3f; --dim: #0e450b; --faint: #496b22;
+  --accent: #1b2a09; --panel-line: #0e450b; --glow: transparent;
+  --ramp-1: #496b22; --ramp-2: #0e450b; --bar: #1b2a09; --bar-alt: #496b22;
+  --a1: #496b22; --a2: #3d5a1c; --a3: #2e4615; --a4: #6b8a35;
+  --a5: #9a9e3f; --a6: #1b2a09; --a7: #0e450b; --a8: #7a9c30; --a9: #14200a;
+  --ex1: #86c232;
+}
+
+[data-theme="cgb"] {
+  --fg: #1b2a09; --bg: #9a9e3f; --dim: #0e450b; --faint: #496b22;
+  --accent: #0e450b; --panel-line: #0e450b; --glow: transparent;
+  --ramp-1: #496b22; --ramp-2: #0e450b; --bar: #1b2a09; --bar-alt: #496b22;
+  --a1: #496b22; --a2: #3d5a1c; --a3: #2e4615; --a4: #6b8a35;
+  --a5: #9a9e3f; --a6: #1b2a09; --a7: #0e450b; --a8: #7a9c30; --a9: #14200a;
+  --ex1: #86c232;
+}
+[data-theme="cgb"][data-variant="dark"] {
+  --fg: #9a9e3f; --bg: #1b2a09; --dim: #496b22; --faint: #0e450b;
+  --accent: #9a9e3f; --panel-line: #496b22;
+  --ramp-1: #0e450b; --ramp-2: #496b22; --bar: #9a9e3f; --bar-alt: #496b22;
+}
+
+[data-theme="vga"] {
+  --fg: #c0c0c0; --bg: #0000a8; --dim: #7a7ac0; --faint: #10106a;
+  --accent: #ffff55; --panel-line: #3a3ad0; --glow: #c0c0c033;
+  --ramp-1: #5555ff; --ramp-2: #55ffff; --bar: #ffffff; --bar-alt: #55ffff;
+  --a1: #5555ff; --a2: #4444cc; --a3: #55ffff; --a4: #00a8a8;
+  --a5: #ffffff; --a6: #ffff55; --a7: #ff5555; --a8: #c0c0c0; --a9: #555555;
+  --ex1: #ff5555;
+}
+[data-theme="vga"][data-subtheme="cyberpunk"] {
+  --fg: #ffe600; --bg: #000000; --dim: #8a7a00; --faint: #2a2400;
+  --accent: #00e0c0; --panel-line: #3a3400; --bar: #ffe600; --bar-alt: #00e0c0;
+}
+[data-theme="vga"][data-subtheme="thirdman"] {
+  --fg: #f0f0f0; --bg: #000000; --dim: #8a8a8a; --faint: #262626;
+  --accent: #e02020; --panel-line: #3a3a3a; --bar: #f0f0f0; --bar-alt: #e02020;
+}
+[data-theme="vga"][data-subtheme="evangelion"] {
+  --fg: #ffe600; --bg: #000000; --dim: #8a7a00; --faint: #2a2400;
+  --accent: #ff2020; --panel-line: #3a3400; --bar: #ffe600; --bar-alt: #ff2020;
+}
+
+/* Doug Drexler reference set (vendor/lcars/src/styles/index.css) */
+[data-theme="lcars"] {
+  --fg: #eb9870; --bg: #090909; --dim: #c47d69; --faint: #191214;
+  --accent: #b6a5d1; --panel-line: #4a3428; --glow: transparent;
+  --ramp-1: #8b72aa; --ramp-2: #c082a9; --bar: #ec943a; --bar-alt: #faa41b;
+  --a1: #ec943a; --a2: #eb9870; --a3: #c47d69; --a4: #d29a7f;
+  --a5: #faa41b; --a6: #c082a9; --a7: #9c698a; --a8: #b6a5d1; --a9: #8b72aa;
+  --ex1: #b73916;
+  /* leonawicz/trekcolors official names */
+  --pale-canary: #ffff99; --tanoi: #ffcc99; --golden-tanoi: #ffcc66;
+  --neon-carrot: #ff9933; --lilac: #cc99cc; --anakiwa: #99ccff;
+  --chestnut-rose: #cc6666; --orange-peel: #ff9966;
+}

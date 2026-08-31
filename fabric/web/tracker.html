@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="lcars">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WOODFIRE — DEVELOPMENT TRACKER</title>
+<link rel="stylesheet" href="theme/themes.css">
+<link rel="stylesheet" href="lcars.css">
+</head>
+<body class="lc-screen">
+  <div class="lc-frame lc-frame-top" id="frameTop"></div>
+  <header class="lc-header">
+    <div class="lc-title">Development Tracker</div>
+    <div class="lc-sub" id="meta">loading docs/harness-plan.md …</div>
+  </header>
+  <div class="lc-strip">
+    <span>source · docs/harness-plan.md</span>
+    <span>auto-rendered</span>
+    <span>d18</span>
+  </div>
+  <div class="lc-divider lc-divider-top"></div>
+  <div class="lc-divider lc-divider-bottom"></div>
+  <div class="lc-frame lc-frame-bottom" id="frameBot"></div>
+  <main class="lc-deck" id="deck" data-layout="single">
+    <section class="lc-pane" style="--pane-slot:p1; --pane-color: var(--a6)">
+      <header class="lc-pane-head">
+        <span class="lc-pane-title">Harness Plan · Stage Tables</span>
+        <span class="lc-pane-num">01</span>
+      </header>
+      <div class="lc-pane-body" id="panels"></div>
+    </section>
+  </main>
+  <footer class="lc-footer">
+    <div class="lc-blip w3"></div><div class="lc-blip w2"></div><div class="lc-blip"></div>
+    <div class="lc-footer-label">Woodfire D18</div>
+  </footer>
+
+<script>
+"use strict";
+const THEMES = ["lcars", "amber", "green", "plasma", "mono", "dmg", "cgb", "vga"];
+const savedTheme = localStorage.getItem("fabric-theme");
+if (savedTheme && THEMES.includes(savedTheme)) {
+  document.documentElement.dataset.theme = savedTheme;
+}
+
+function block(label, cls, kind, target) {
+  const el = document.createElement(kind === "link" ? "a" : "button");
+  el.className = `lc-block ${cls}`;
+  if (kind === "link") el.href = target;
+  else { el.type = "button"; if (target) el.onclick = target; }
+  const span = document.createElement("span");
+  span.textContent = label;
+  el.append(span);
+  return el;
+}
+function headerBlock(label, cls) {
+  const el = block(label, cls + " dim-label", "button", null);
+  el.style.cursor = "default";
+  return el;
+}
+
+(function initFrameTop() {
+  const ft = document.getElementById("frameTop");
+  ft.append(block("D18", "blk-a5", "button", null));
+  ft.append(Object.assign(document.createElement("div"), { className: "lc-spacer" }));
+})();
+
+(function renderRail() {
+  const rail = document.getElementById("frameBot");
+  rail.append(Object.assign(document.createElement("div"), { className: "lc-spacer" }));
+  rail.append(headerBlock("Themes", "blk-a7"));
+  for (const t of THEMES) {
+    const b = block(t, "blk-a2", "button", () => {
+      document.documentElement.dataset.theme = t;
+      localStorage.setItem("fabric-theme", t);
+      [...rail.querySelectorAll("[data-kind=theme]")].forEach(el =>
+        el.classList.toggle("active", el === b));
+    });
+    b.dataset.kind = "theme";
+    if (document.documentElement.dataset.theme === t) b.classList.add("active");
+    rail.append(b);
+  }
+  rail.append(block("Terminal Deck", "blk-ex1", "link", "/"));
+  rail.append(block("Upstream Build", "blk-a9", "link", "/ui/upstream/"));
+})();
+
+fetch("/api/tracker").then(r => r.json()).then(data => {
+  document.getElementById("meta").textContent =
+    `updated ${data.mtime} · ${Object.keys(data.sections).length} stage tables`;
+  const panels = document.getElementById("panels");
+  for (const [name, sec] of Object.entries(data.sections)) {
+    const wrap = document.createElement("div");
+    wrap.className = "lc-kv";
+    const h = document.createElement("div");
+    h.className = "lc-kv-h";
+    h.textContent = name;
+    const tbl = document.createElement("table");
+    tbl.className = "lc-table";
+    const head = document.createElement("tr");
+    for (const col of sec.columns) {
+      const th = document.createElement("th"); th.textContent = col; head.append(th);
+    }
+    tbl.append(head);
+    for (const row of sec.rows) {
+      const tr = document.createElement("tr");
+      row.cells.forEach((cellText, i) => {
+        const td = document.createElement("td");
+        td.textContent = cellText;
+        if (i === 0 && row.stage && name === "Status summary") {
+          const b = document.createElement("span");
+          b.className = "lc-badge st-" + row.stage.replace(/[^a-z]/g, "");
+          b.textContent = row.stage;
+          td.append(document.createElement("br"), b);
+        }
+        tr.append(td);
+      });
+      tbl.append(tr);
+    }
+    wrap.append(h, tbl);
+    panels.append(wrap);
+  }
+}).catch(e => {
+  document.getElementById("meta").textContent = "tracker unavailable: " + e;
+});
+</script>
+</body>
+</html>
