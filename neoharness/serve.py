@@ -12,14 +12,18 @@ Integration:
 - Hermes:  `hermes model` -> custom OpenAI-compatible endpoint, same URL
 
 BPE state, skills, and trajectories persist in NEOH_STATE_DIR across
-requests, so cross-session recall works for both clients. Goals run
-serially (the duty GPU is serial anyway).
+requests, so cross-session recall works for both clients. Goals may overlap:
+--max-concurrent-goals N lets N requests sit in flight at once so a
+continuous-batching duty server (llama-server -np 4) can keep all its slots
+busy. The default is 1, which is the old serial behaviour. Shared BPE state is
+safe at any N -- bpe.py serializes it with one re-entrant lock.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import queue
 import threading
 import time
@@ -41,7 +45,8 @@ class _Server(ThreadingHTTPServer):
     daemon_threads = True
 
     def __init__(self, addr, llm, workspace: Path, latent: bool,
-                 max_steps: int, max_tokens: int):
+                 max_steps: int, max_tokens: int,
+                 max_concurrent_goals: int = 1):
         super().__init__(addr, _Handler)
         self.llm = llm
         self.workspace = workspace
@@ -49,7 +54,12 @@ class _Server(ThreadingHTTPServer):
         self.max_steps = max_steps
         self.max_tokens = max_tokens
         self.state = BPEState.load()
-        self.goal_lock = threading.Lock()  # one goal at a time
+        # A semaphore, not a lock: the duty server runs continuous batching, so
+        # N goals in flight keep N slots busy and the MoE gathers overlap. A
+        # mutex would hand the GPU one goal at a time and leave the other slots
+        # idle -- the opposite of what -np is paying for. Cap it at the duty
+        # server's --parallel so goals queue instead of thrashing.
+        self.goal_sem = threading.BoundedSemaphore(max(1, max_concurrent_goals))
 
 
 def _extract_goal(messages: list[dict]) -> str:
@@ -163,7 +173,7 @@ class _Handler(BaseHTTPRequestHandler):
             events.put(f"> t{step.t} [{step.kind}] {call[:200]}\n")
 
         def run_goal():
-            with srv.goal_lock:
+            with srv.goal_sem:
                 harness = Harness(srv.llm, state=srv.state)
                 if srv.latent:
                     from .vectors import XYZBuffer
@@ -244,8 +254,10 @@ class _Handler(BaseHTTPRequestHandler):
 
 def make_server(host: str, port: int, llm, workspace: Path,
                 latent: bool = False, max_steps: int = 40,
-                max_tokens: int = 1024) -> _Server:
-    return _Server((host, port), llm, workspace, latent, max_steps, max_tokens)
+                max_tokens: int = 1024,
+                max_concurrent_goals: int = 1) -> _Server:
+    return _Server((host, port), llm, workspace, latent, max_steps, max_tokens,
+                   max_concurrent_goals)
 
 
 def main(argv: list[str] | None = None, llm=None) -> int:
@@ -258,9 +270,15 @@ def main(argv: list[str] | None = None, llm=None) -> int:
     p.add_argument("--latent", action="store_true")
     p.add_argument("--model", default=None)
     p.add_argument("--base-url", default=None)
+    p.add_argument(
+        "--max-concurrent-goals", type=int,
+        default=int(os.environ.get("NEOH_MAX_CONCURRENT_GOALS", "1")),
+        help="goals allowed in flight at once. Keep at 1 for a serial duty "
+             "model; raise it to the duty server's --parallel (4 on the "
+             "flashnext-1x4 launch) so continuous batching can actually fill "
+             "its slots.")
     args = p.parse_args(argv)
 
-    import os
     if args.latent or os.environ.get("NEOH_LATENT") == "1":
         os.environ["NEOH_LATENT"] = "1"
         args.latent = True
@@ -271,9 +289,11 @@ def main(argv: list[str] | None = None, llm=None) -> int:
 
     server = make_server(args.host, args.port, llm,
                          Path(args.workspace).resolve(), args.latent,
-                         args.max_steps, args.max_tokens)
+                         args.max_steps, args.max_tokens,
+                         args.max_concurrent_goals)
     print(f"neoharness serving on http://{args.host}:{args.port}/v1 "
-          f"(workspace={server.workspace}, latent={'on' if args.latent else 'off'})",
+          f"(workspace={server.workspace}, latent={'on' if args.latent else 'off'}, "
+          f"concurrent_goals={args.max_concurrent_goals})",
           flush=True)
     try:
         server.serve_forever()

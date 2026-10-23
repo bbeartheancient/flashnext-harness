@@ -19,12 +19,19 @@ to the caller's environment. Malformed actions return kind="invalid".
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field
 
 from .bpe import BPEState
 
 HARNESS_VERBS = ("track", "commit", "recall", "note")
+
+# How many retired spans a single recall[] returns from the LTM. Larger than
+# Experience's RECALL_TOP_K because LTM entries are raw conversation (one turn
+# each) rather than distilled skills, so more of them are needed to cover the
+# same ground.
+RECALL_LTM_K = int(os.environ.get("NEOH_RECALL_ACTION_K", "4"))
 
 # BPE component -> n-gram buffer coordinate axis (user directive:
 # "BPE vectors can be used as the XYZ vectors in the n-gram buffer").
@@ -68,6 +75,7 @@ def dispatch(
     text: str,
     state: BPEState,
     on_write=None,
+    ltm=None,
 ) -> ActionResult:
     """Dispatch one model action against the BPE state.
 
@@ -75,6 +83,13 @@ def dispatch(
     harness WRITE (commit/note) and after belief-affecting reads, so the XYZ
     vector lane can mirror the state change into the n-gram buffer. It is
     fire-and-forget: exceptions are caught and recorded in the result detail.
+
+    ``ltm`` is the sliding gate's LTMStore, when one is wired. It holds what
+    the gate RETIRED from the window. `recall[]` searches both stores, because
+    they answer different questions: Experience holds distilled skills written
+    deliberately, LTM holds conversation that was compacted away. A duty model
+    that asks what it did twenty turns ago wants the second one, and before
+    this existed it had no way to ask.
     """
     parsed = parse_action(text)
     if parsed is None:
@@ -101,16 +116,30 @@ def dispatch(
             )
 
         elif verb == "recall":
+            # Search BOTH stores. LTM first: it is the larger and more
+            # literal record (raw retired turns), while Experience holds a
+            # handful of distilled skills. A miss in one must not hide a hit in
+            # the other, so neither is allowed to short-circuit the other.
             hits = state.experience.recall(arg)
-            if hits:
-                obs = "\n".join(
-                    f"({h['kind']}) {h['title']}: {h['text']}" for h in hits
-                )
-            else:
-                obs = "(no matching experience)"
+            ltm_hits = []
+            if ltm is not None:
+                try:
+                    ltm_hits = ltm.recall(arg, k=RECALL_LTM_K)
+                except Exception:                             # noqa: BLE001
+                    ltm_hits = []      # recall must never break the turn
+            lines = []
+            for h in hits:
+                lines.append(f"(skill/{h['kind']}) {h['title']}: {h['text']}")
+            for e in ltm_hits:
+                lines.append(f"(ltm/turn {e['turn']}) "
+                             f"{e['text'].strip().replace(chr(10), ' ')[:400]}")
+            obs = "\n".join(lines) if lines else "(no matching experience)"
             return ActionResult(
                 "harness", verb, arg, obs, axis,
-                {"write": False, "hits": [h["skill_id"] for h in hits]},
+                {"write": False,
+                 "hits": [h["skill_id"] for h in hits],
+                 "ltm_hits": [e["id"] for e in ltm_hits],
+                 "n_experience": len(hits), "n_ltm": len(ltm_hits)},
             )
 
         elif verb == "note":

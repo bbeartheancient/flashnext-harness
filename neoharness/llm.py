@@ -16,6 +16,13 @@ DEFAULT_BASE_URL = "http://127.0.0.1:8000/v1"
 # Model-card THINKING sampling set.
 THINKING_SAMPLING = {"temperature": 1.0, "top_p": 0.95, "top_k": 20}
 
+# Strata's `reasoning_effort` (docs/DETAILS.md). It DEFAULTS TO "high", which for a
+# tool-calling duty model is mostly waste: measured against Strata on this box the
+# same request cost 347 completion tokens at the default and 14 at "none". It is
+# also a correctness hazard — thinking can exhaust max_tokens and leave
+# `message.content` null, which used to crash the consolidation stage.
+DEFAULT_REASONING_EFFORT = os.environ.get("NEOH_REASONING_EFFORT", "none")
+
 
 class DutyLLM:
     def __init__(
@@ -33,6 +40,8 @@ class DutyLLM:
         self.model = model or os.environ.get("NEOH_LLM_MODEL", "duty")
         self.api_key = api_key or os.environ.get("NEOH_LLM_API_KEY", "local")
         self.sampling = dict(THINKING_SAMPLING if sampling is None else sampling)
+        eff = os.environ.get("NEOH_REASONING_EFFORT")
+        self.sampling.setdefault("reasoning_effort", eff if eff is not None else DEFAULT_REASONING_EFFORT)
         self.max_tokens = max_tokens
         self.timeout = timeout
         self.usage = {"prompt_tokens": 0, "completion_tokens": 0, "calls": 0}
@@ -61,4 +70,13 @@ class DutyLLM:
         self.usage["prompt_tokens"] += u.get("prompt_tokens", 0)
         self.usage["completion_tokens"] += u.get("completion_tokens", 0)
         self.usage["calls"] += 1
-        return payload["choices"][0]["message"]["content"]
+        content = (payload.get("choices") or [{}])[0].get("message", {}).get("content")
+        if content is None:
+            # every token went to reasoning (or the reply was cut off). Say so
+            # rather than returning None into a string concatenation.
+            reasoning = (payload["choices"][0]["message"].get("reasoning_content")
+                         or payload["choices"][0]["message"].get("reasoning") or "")
+            return (reasoning.strip() or
+                    f"[no content: the reply used all {self.max_tokens} max_tokens on reasoning "
+                    f"(reasoning_effort={self.sampling.get('reasoning_effort')})]")
+        return content

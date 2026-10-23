@@ -10,10 +10,33 @@ Persistence: JSON under NEOH_STATE_DIR (default ~/.local/state/neoharness).
 
 from __future__ import annotations
 
+import functools
 import json
 import os
+import threading
 import time
 from pathlib import Path
+
+# One re-entrant lock guards every store container. The 1:4 setup (four agents
+# running against one duty server) shares a single BPEState across goals, so
+# read-modify-write sequences like update()'s evict, commit()'s append+evict and
+# recall()'s usage_count bump are no longer atomic on their own. The critical
+# sections are in-memory list/dict work measured in microseconds, so a single
+# coarse lock costs nothing next to a model step; os.replace in save() already
+# keeps the on-disk file whole.
+_STATE_LOCK = threading.RLock()
+
+
+def _guarded(fn):
+    """Serialize a store method against the shared _STATE_LOCK (re-entrant)."""
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        with _STATE_LOCK:
+            return fn(*args, **kwargs)
+
+    return wrapper
+
 
 DEFAULT_MAX_FACTS = 256
 DEFAULT_MAX_SUBGOALS = 64
@@ -44,6 +67,7 @@ class BeliefStore:
         self.max_facts = max_facts
         self.facts: dict[str, dict] = {}
 
+    @_guarded
     def update(
         self,
         obj: str,
@@ -71,6 +95,7 @@ class BeliefStore:
                 del self.facts[stalest]
         return entry
 
+    @_guarded
     def track(self, query: str = "world") -> str:
         """track[object] -> one fact view; track[world] -> compact summary."""
         query = query.strip().lower()
@@ -91,6 +116,7 @@ class BeliefStore:
             parts.append("rel=[" + "; ".join(entry["relations"]) + "]")
         return " ".join(parts)
 
+    @_guarded
     def render(self, limit: int = 32) -> str:
         if not self.facts:
             return "(belief empty)"
@@ -100,6 +126,7 @@ class BeliefStore:
         return "\n".join(self._render_entry(o, e) for o, e in recent)
 
     # -- persistence --
+    @_guarded
     def to_json(self) -> dict:
         return {"max_facts": self.max_facts, "facts": self.facts}
 
@@ -117,6 +144,7 @@ class ProgressStore:
         self.max_subgoals = max_subgoals
         self.entries: list[dict] = []  # {"subgoal", "status", "updated"}
 
+    @_guarded
     def commit(self, subgoal: str, status: str = "done") -> dict:
         subgoal = subgoal.strip()[:160]  # cap: models sometimes quote H_t back
         if not subgoal:
@@ -138,15 +166,18 @@ class ProgressStore:
             del self.entries[done[0] if done else 0]
         return entry
 
+    @_guarded
     def open_subgoals(self) -> list[dict]:
         return [e for e in self.entries if e["status"] in ("pending", "blocked")]
 
+    @_guarded
     def render(self, limit: int = 16) -> str:
         if not self.entries:
             return "(progress empty)"
         recent = self.entries[-limit:]
         return "\n".join(f"[{e['status']}] {e['subgoal']}" for e in recent)
 
+    @_guarded
     def to_json(self) -> dict:
         return {"max_subgoals": self.max_subgoals, "entries": self.entries}
 
@@ -175,6 +206,7 @@ class ExperienceStore:
         self._seq += 1
         return f"{kind}-{self._seq:04d}"
 
+    @_guarded
     def add(self, kind: str, title: str, text: str, skill_id: str | None = None) -> dict:
         if kind not in SKILL_KINDS:
             raise ValueError(f"kind must be one of {SKILL_KINDS}, got {kind!r}")
@@ -191,6 +223,7 @@ class ExperienceStore:
         self._evict_if_over()
         return entry
 
+    @_guarded
     def update(self, skill_id: str, text: str | None = None, title: str | None = None) -> dict:
         entry = self.skills[skill_id]
         if text is not None:
@@ -200,9 +233,11 @@ class ExperienceStore:
         entry["updated"] = time.time()
         return entry
 
+    @_guarded
     def remove(self, skill_id: str) -> None:
         self.skills.pop(skill_id, None)
 
+    @_guarded
     def recall(self, query: str, k: int = RECALL_TOP_K) -> list[dict]:
         """Lexical overlap top-k; bumps usage_count of returned entries."""
         q = {w for w in query.lower().split() if len(w) > 2}
@@ -218,6 +253,7 @@ class ExperienceStore:
             entry["usage_count"] += 1
         return hits
 
+    @_guarded
     def note(self, insight: str, kind: str = "general") -> dict:
         if kind not in SKILL_KINDS:
             raise ValueError(f"kind must be one of {SKILL_KINDS}, got {kind!r}")
@@ -235,6 +271,7 @@ class ExperienceStore:
             )
             del self.skills[victim["skill_id"]]
 
+    @_guarded
     def render(self, limit: int = 12) -> str:
         if not self.skills:
             return "(experience empty)"
@@ -245,6 +282,7 @@ class ExperienceStore:
         )[:limit]
         return "\n".join(f"({e['kind']}) {e['title']}: {e['text']}" for e in top)
 
+    @_guarded
     def to_json(self) -> dict:
         return {
             "max_skills": self.max_skills,
@@ -275,6 +313,7 @@ class BPEState:
         self.progress = progress or ProgressStore()
         self.experience = experience or ExperienceStore()
 
+    @_guarded
     def render(self) -> str:
         """The policy-facing harness view spliced into the prompt."""
         return (
@@ -284,6 +323,7 @@ class BPEState:
         )
 
     # -- persistence --
+    @_guarded
     def save(self, path: str | Path | None = None) -> Path:
         p = Path(path) if path else state_dir() / "bpe_state.json"
         p.parent.mkdir(parents=True, exist_ok=True)
